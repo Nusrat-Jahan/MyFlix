@@ -3,14 +3,213 @@
   <head>
     <meta charset="utf-8" />
     <title>MyFlix Documentation</title>
+    <link href="css/styles.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <h1>Objective</h1>
-    <p>
-      This web application will provide users access to different information
-      about movies, directors, genres etc. Additionally, Users will be able to
-      sign up, update their personal information as well as create a list of
-      their favorite movies.
-    </p>
+    <main>
+      <h1>Objective</h1>
+      <p>
+        This web application will provide users access to different information
+        about movies, directors, genres etc. Additionally, Users will be able to
+        sign up, update their personal information as well as create a list of
+        their favorite movies.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th class="description">
+              <h2>Description</h2>
+            </th>
+            <th class="method">
+              <h2>Method</h2>
+            </th>
+            <th class="Url">
+              <h2>URL</h2>
+            </th>
+            <th class="query">
+              <h2>Query Parameters</h2>
+            </th>
+            <th class="body_request">
+              <h2>Body of Request</h2>
+            </th>
+            <th class="body_response">
+              <h2>Body of Response</h2>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td scope="row">Return a list of ALL movies to the user</td>
+            <td>GET</td>
+            <td>/movies</td>
+            <td>None</td>
+            <td>None</td>
+            <td>
+              <p>A JSON object holding the data about all movies<br /><br /></p>
+            </td>
+          </tr>
+          <tr>
+            <td scope="row">
+              Return data (genre, director, release year) about a single movie
+              by title to the user
+            </td>
+            <td>GET</td>
+            <td>/movies/:title</td>
+            <td>Title</td>
+            <td>None</td>
+            <td>
+              <p>
+                A JSON object holding data about a single Movie, containing
+                title, genre, release year.<br /><br />
+                <strong>e.g.</strong><br />
+                {<br />
+                &nbsp&nbsp title: "The Godfather"<br />
+                &nbsp&nbsp director: "Francis Ford Coppola",<br />
+                &nbsp&nbsp genre: [ "Crime", "Drama" ],<br />
+                &nbsp&nbsp releaseYear: "1972", <br />
+                &nbsp&nbsp imdbRating: "9.2" <br />
+                }
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td scope="row">
+              Return data about a genre (description) by name/title (e.g.,
+              “Thriller”)
+            </td>
+            <td>GET</td>
+            <td>/movies/:title/genre</td>
+            <td>Name</td>
+            <td>None</td>
+            <td>
+              <p>
+                An html response with a description of the requested genre<br />
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td scope="row">
+              Return data about a director (bio, birth year, death year) by name
+            </td>
+            <td>GET</td>
+            <td>director/:name</td>
+            <td>Name</td>
+            <td>None</td>
+            <td>
+              <p>
+                An html response with a description of the requested director<br /><br />
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td scope="row">Allow new users to register</td>
+            <td>POST</td>
+            <td>/users</td>
+            <td>None</td>
+            <td>
+              <p>
+                A JSON object holding data about the new user to add, structured
+                like: {<br />
+                &nbsp&nbsp Username: "Nusrat"<br />
+                &nbsp&nbsp UserId: 54326747<br />
+                &nbsp&nbsp Password: ********<br />
+                &nbsp&nbsp Email: dummy@test.com<br />
+                &nbsp&nbsp Birthdate: 01/01/1995<br />
+                }
+              </p>
+            </td>
+            <td>
+              <p>
+                An html response that the account has been created<br /><br />
+                <strong>e.g.</strong><br />
+                Thank you for subscribing to MyFlix
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td scope="row">
+              Allow users to update their user info (username)
+            </td>
+            <td>PUT</td>
+            <td>/users/:username</td>
+            <td>Username</td>
+            <td>None</td>
+            <td>
+              <p>
+                An html response showing the username has been updated<br /><br />
+                <strong>e.g.</strong><br />
+                Successfully updated the username.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td scope="row">
+              Allow users to add a movie to their list of favorites
+            </td>
+            <td>POST</td>
+            <td>/users/:username/movies/:title</td>
+            <td>Username<br />Title</td>
+            <td>
+              <p>
+                A JSON object holding data about the favorite movie to add,
+                structured like: {<br />
+                {<br />
+                &nbsp&nbsp title: "The Godfather"<br />
+                &nbsp&nbsp director: "Francis Ford Coppola",<br />
+                &nbsp&nbsp genre: [ "Crime", "Drama" ],<br />
+                &nbsp&nbsp releaseYear: "1972", <br />
+                &nbsp&nbsp imdbRating: "9.2" <br />
+                }
+              </p>
+            </td>
+            <td>
+              <p>
+                An html response that the movie selected has been added to the
+                favourites list<br /><br />
+                <strong>e.g.</strong><br />
+                Movie has been added to your favourites!<br /><br />
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td scope="row">
+              Allow users to remove a movie from their list of favorites
+            </td>
+            <td>DELETE</td>
+            <td>/users/:username/movies/:title</td>
+            <td>Username<br />Title</td>
+            <td>None</td>
+            <td>
+              <p>
+                An html response that the movie selected has been removed from
+                the favourites list<br /><br />
+                <strong>e.g.</strong><br />
+                Movie has been deleted from your favourites!<br /><br />
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td scope="row">Allow existing users to deregister</td>
+            <td>DELETE</td>
+            <td>/users/:username</td>
+            <td>Username</td>
+            <td>None</td>
+            <td>
+              <p>
+                An html response that the account has been deleted<br /><br />
+                <strong>e.g.</strong><br />
+                Your account has been deleted!<br /><br />
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+    <footer></footer>
   </body>
 </html>
