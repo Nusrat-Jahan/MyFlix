@@ -3,7 +3,7 @@ morgan = require("morgan");
 const app = express();
 
 app.use(morgan("common"));
-app.use(express.static("public"));
+app.use(express.static("public")); // if in this have multiple files, it can be accessed via the file name, like test.html after path
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
@@ -90,11 +90,46 @@ app.get("/", (req, res) => {
 app.get("/documentation", (req, res) => {
   res.sendFile("public/documentation.html", { root: __dirname });
 });
-
+// Return a list of ALL movies to the user
 app.get("/movies", (req, res) => {
   res.json(movies);
 });
-
+// Return data (genre, director, release year) about a single movie by title to the user
+app.get("/movies/:title", (req, res) => {
+  res.json(
+    movies.find(movie => {
+      return movie.title === req.params.title;
+    })
+  );
+});
+// Return data about a genre (description) by name/title (e.g., “Thriller”)
+app.get("/movies/:title/genre", (req, res) => {
+  res.send("Here's the data about ___ genre");
+});
+// Return data about a director (bio, birth year, death year) by name
+app.get("director/:name", (req, res) => {
+  res.send("Here the details about the director ___");
+});
+// Allow new users to register
+app.post("/users", (req, res) => {
+  res.send("Thank you for subscribing to MyFlix");
+});
+// Allow users to update their user info (username)
+app.put("/users/:username", (req, res) => {
+  res.send("Successfully updated the username");
+});
+// Allow users to add a movie to their list of favorites
+app.post("/users/:username/movies/:title", (req, res) => {
+  res.send("Movie has been added to your favourites!");
+});
+// Allow users to remove a movie from their list of favorites
+app.delete("/users/:username/movies/:title", (req, res) => {
+  res.send("Movie has been deleted from your favourites!");
+});
+// Allow existing users to deregister
+app.delete("/users/:username", (req, res) => {
+  res.send("Your account has been deleted");
+});
 // listen for requests
 app.listen(8080, () => {
   console.log("Your app is listening on port 8080.");
