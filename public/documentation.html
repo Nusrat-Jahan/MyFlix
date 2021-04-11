@@ -63,11 +63,29 @@
                 title, genre, release year.<br /><br />
                 <strong>e.g.</strong><br />
                 {<br />
-                &nbsp&nbsp title: "The Godfather"<br />
-                &nbsp&nbsp director: "Francis Ford Coppola",<br />
-                &nbsp&nbsp genre: [ "Crime", "Drama" ],<br />
-                &nbsp&nbsp releaseYear: "1972", <br />
-                &nbsp&nbsp imdbRating: "9.2" <br />
+                &nbsp&nbsp "Genre": { <br />
+                &nbsp&nbsp "Name": "Thriller",<br />
+                &nbsp&nbsp "Description": "Thriller film, also known as suspense
+                film or suspense thriller, is a broad film genre that involves
+                excitement and suspense in the audience."<br />
+                }, <br />&nbsp&nbsp "Director": { <br />
+                &nbsp&nbsp&nbsp "Name": "Jonathan Demme",
+                <br />
+                &nbsp&nbsp "Bio": "Robert Jonathan Demme was an American
+                director, producer, and screenwriter.",<br />
+                &nbsp&nbsp "Birth": "1944",<br />
+                &nbsp&nbsp "Death": "2017" <br />},<br />
+                &nbsp&nbsp "Actors": [],<br />
+                &nbsp&nbsp "_id": "606f12ec196e5f78e38d4446",<br />
+                &nbsp&nbsp "Title": "Silence of the Lambs",<br />
+                &nbsp&nbsp "Description": "Clarice Starling, an FBI agent, seeks
+                help from Hannibal Lecter, a psychopathic serial killer and
+                former psychiatrist, in order to apprehend another serial killer
+                who has been claiming female victims.",<br />
+                &nbsp&nbsp "ImagePath": "silenceofthelambs.png",<br />
+                &nbsp&nbsp "ReleaseYear": "1991",<br />
+                &nbsp&nbsp "ImdbRating": 8.6, <br />
+                &nbsp&nbsp "Featured": true <br />
                 }
               </p>
             </td>
@@ -78,7 +96,7 @@
               “Thriller”)
             </td>
             <td>GET</td>
-            <td>/movies/:title/genre</td>
+            <td>/movies/genre/:name</td>
             <td>Name</td>
             <td>None</td>
             <td>
@@ -92,7 +110,7 @@
               Return data about a director (bio, birth year, death year) by name
             </td>
             <td>GET</td>
-            <td>director/:name</td>
+            <td>movies/director/:name</td>
             <td>Name</td>
             <td>None</td>
             <td>
@@ -112,11 +130,11 @@
                 A JSON object holding data about the new user to add, structured
                 like: {<br />
                 &nbsp&nbsp Username: "Nusrat"<br />
-                &nbsp&nbsp UserId: 54326747<br />
                 &nbsp&nbsp Password: ********<br />
                 &nbsp&nbsp Email: dummy@test.com<br />
                 &nbsp&nbsp Birthdate: 01/01/1995<br />
-                }
+                &nbsp&nbsp FavoriteMovies: [606f4e01196e5f78e38d4448,
+                606f4c28196e5f78e38d4447] }
               </p>
             </td>
             <td>
@@ -130,15 +148,22 @@
 
           <tr>
             <td scope="row">
-              Allow users to update their user info (username)
+              Allow users to update their user info
             </td>
             <td>PUT</td>
             <td>/users/:username</td>
             <td>Username</td>
-            <td>None</td>
+            <td>
+              $set: { &nbsp&nbsp Username: "Nusrat Updated", <br />
+              &nbsp&nbsp Password: *****, <br />
+              &nbsp&nbsp Email: updated@update.com, <br />
+              &nbsp&nbsp Birthday: 1995/07/07 <br />
+              }
+            </td>
             <td>
               <p>
-                An html response showing the username has been updated<br /><br />
+                An html response showing the user information has been
+                updated<br /><br />
                 <strong>e.g.</strong><br />
                 Successfully updated the username.
               </p>
@@ -150,19 +175,18 @@
               Allow users to add a movie to their list of favorites
             </td>
             <td>POST</td>
-            <td>/users/:username/movies/:title</td>
-            <td>Username<br />Title</td>
+            <td>/users/:Username/movies/:MovieID</td>
+            <td>Username<br />MovieID</td>
             <td>
               <p>
                 A JSON object holding data about the favorite movie to add,
                 structured like: {<br />
                 {<br />
-                &nbsp&nbsp title: "The Godfather"<br />
-                &nbsp&nbsp director: "Francis Ford Coppola",<br />
-                &nbsp&nbsp genre: [ "Crime", "Drama" ],<br />
-                &nbsp&nbsp releaseYear: "1972", <br />
-                &nbsp&nbsp imdbRating: "9.2" <br />
-                }
+                &nbsp&nbsp Username: "Nusrat"<br />
+                &nbsp&nbsp Password: ********<br />
+                &nbsp&nbsp Email: dummy@test.com<br />
+                &nbsp&nbsp Birthdate: 01/01/1995<br />
+                &nbsp&nbsp FavoriteMovies: [606f4e01196e5f78e38d4448] <br />}
               </p>
             </td>
             <td>
@@ -180,8 +204,8 @@
               Allow users to remove a movie from their list of favorites
             </td>
             <td>DELETE</td>
-            <td>/users/:username/movies/:title</td>
-            <td>Username<br />Title</td>
+            <td>/users/:Username/movies/:MovieID</td>
+            <td>Username<br />MovieID</td>
             <td>None</td>
             <td>
               <p>
@@ -196,7 +220,7 @@
           <tr>
             <td scope="row">Allow existing users to deregister</td>
             <td>DELETE</td>
-            <td>/users/:username</td>
+            <td>/users/:Username</td>
             <td>Username</td>
             <td>None</td>
             <td>
