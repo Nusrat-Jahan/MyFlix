@@ -9,7 +9,7 @@ const passport = require("passport");
 require("./passport");
 const cors = require("cors");
 let allowedOrigins = [
-  "https://myFlixapp.herokuapp.com",
+  "https://myflix-movie-app.herokuapp.com/",
   "http://localhost:8080"
 ];
 // app.use(cors());
@@ -34,11 +34,14 @@ const mongoose = require("mongoose");
 const Models = require("./models.js");
 const Movies = Models.Movie;
 const Users = Models.User;
-mongoose.connect("mongodb://localhost:27017/myFlixDB", {
+// mongoose.connect("mongodb://localhost:27017/myFlixDB", {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// });
+mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
-
 app.use(morgan("common"));
 app.use(express.static("public")); // if in this have multiple files, it can be accessed via the file name, like test.html after path
 app.use((err, req, res, next) => {
