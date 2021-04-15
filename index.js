@@ -7,6 +7,9 @@ app.use(bodyParser.json());
 let auth = require("./auth")(app); // 'app' here ensures express is available in auth.js file.
 const passport = require("passport");
 require("./passport");
+const cors = require("cors");
+app.use(cors());
+const { check, validationResult } = require("express-validator");
 morgan = require("morgan");
 const mongoose = require("mongoose");
 const Models = require("./models.js");
@@ -127,32 +130,52 @@ app.get(
 );
 
 // Allow new users to register
-app.post("/users", (req, res) => {
-  Users.findOne({ Username: req.body.username })
-    .then(user => {
-      if (user) {
-        return res.status(400).send(req.body.username + "already exists");
-      } else {
-        Users.create({
-          Username: req.body.Username,
-          Password: req.body.Password,
-          Email: req.body.Email,
-          Birthday: req.body.Birthday
-        })
-          .then(user => {
-            res.status(201).json(user);
+app.post(
+  "/users",
+  [
+    check("Username", "Username is required").isLength({ min: 3 }),
+    check(
+      "Username",
+      "Username contains non alphanumeric characters - not allowed"
+    ).isAlphanumeric(),
+    check("Password", "Password is required")
+      .not()
+      .isEmpty(),
+    check("Email", "Email does not appear to be valid").isEmail()
+  ],
+  (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      //If errors not empty
+      return res.status(422).json({ errors: errors.array() });
+    }
+    let hashedPassword = Users.hashPassword(req.body.Password);
+    Users.findOne({ Username: req.body.username })
+      .then(user => {
+        if (user) {
+          return res.status(400).send(req.body.username + "already exists");
+        } else {
+          Users.create({
+            Username: req.body.Username,
+            Password: req.body.Password,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
           })
-          .catch(error => {
-            console.error(error);
-            res.status(500).send("Error: " + error);
-          });
-      }
-    })
-    .catch(error => {
-      console.error(error);
-      res.status(500).send("Error: " + error);
-    });
-});
+            .then(user => {
+              res.status(201).json(user);
+            })
+            .catch(error => {
+              console.error(error);
+              res.status(500).send("Error: " + error);
+            });
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        res.status(500).send("Error: " + error);
+      });
+  }
+);
 
 // Allow users to add a movie to their list of favorites
 app.post(
@@ -181,7 +204,24 @@ app.post(
 app.put(
   "/users/:username",
   passport.authenticate("jwt", { session: false }),
+  [
+    check("Username", "Username is required").isLength({ min: 3 }),
+    check(
+      "Username",
+      "Username contains non alphanumeric characters - not allowed"
+    ).isAlphanumeric(),
+    check("Password", "Password is required")
+      .not()
+      .isEmpty(),
+    check("Email", "Email does not appear to be valid").isEmail()
+  ],
   (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      //If errors not empty
+      return res.status(422).json({ errors: errors.array() });
+    }
+    let hashedPassword = Users.hashPassword(req.body.Password);
     Users.findOneAndUpdate(
       { Username: req.params.username },
       {
@@ -261,6 +301,10 @@ app.delete("/users/:username", (req, res) => {
     });
 });
 // listen for requests
-app.listen(8080, () => {
-  console.log("Your app is listening on port 8080.");
+// app.listen(8080, () => {
+//   console.log("Your app is listening on port 8080.");
+// });
+const port = process.env.PORT || 8080;
+app.listen(port, "0.0.0.0", () => {
+  console.log("Listening on Port " + port);
 });
