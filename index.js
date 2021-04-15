@@ -8,7 +8,26 @@ let auth = require("./auth")(app); // 'app' here ensures express is available in
 const passport = require("passport");
 require("./passport");
 const cors = require("cors");
-app.use(cors());
+let allowedOrigins = [
+  "https://myFlixapp.herokuapp.com",
+  "http://localhost:8080"
+];
+// app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        // If a specific origin isn’t found on the list of allowed origins
+        let message =
+          "The CORS policy for this application doesn’t allow access from origin " +
+          origin;
+        return callback(new Error(message), false);
+      }
+      return callback(null, true);
+    }
+  })
+);
 const { check, validationResult } = require("express-validator");
 morgan = require("morgan");
 const mongoose = require("mongoose");
@@ -149,7 +168,7 @@ app.post(
       //If errors not empty
       return res.status(422).json({ errors: errors.array() });
     }
-    let hashedPassword = Users.hashPassword(req.body.Password);
+    let hashedPassword = Users.hashPassword(req.body.Password); //Hash any password entered by the user when registering before storing it in the MongoDB database
     Users.findOne({ Username: req.body.username })
       .then(user => {
         if (user) {
