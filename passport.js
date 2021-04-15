@@ -28,6 +28,10 @@ passport.use(
             message: "Incorrect Username or Password"
           }); //If the credentials are not valid (for example, if the password is incorrect), 'callback' should be invoked with false and give user a message to indicate an authentication failure
         }
+        if (!user.validatePassword(password)) {
+          console.log("Incorrect password");
+          return callback(null, false, { message: "Incorrect password" });
+        }
         console.log("Finished");
         return callback(null, user); //If the credentials are valid, the verify 'callback' invokes to supply Passport with the user that authenticated.
       });
