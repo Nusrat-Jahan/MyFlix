@@ -10,7 +10,8 @@ require("./passport");
 const cors = require("cors");
 let allowedOrigins = [
   "https://myflix-movie-app.herokuapp.com/",
-  "http://localhost:8080"
+  "http://localhost:8080",
+  "http://localhost:1234"
 ];
 // app.use(cors());
 app.use(
@@ -50,21 +51,25 @@ app.use((err, req, res, next) => {
 });
 
 // Get all users
-app.get("/users", (req, res) => {
-  Users.find()
-    .then(users => {
-      res.status(201).json(users);
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).send("Error: " + err);
-    });
-});
+app.get(
+  "/users",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Users.find()
+      .then(users => {
+        res.status(201).json(users);
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      });
+  }
+);
 
 // Get all movies
 app.get(
   "/movies",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   (req, res) => {
     Movies.find()
       .then(movies => {
@@ -155,7 +160,10 @@ app.get(
 app.post(
   "/users",
   [
-    check("Username", "Username is required").isLength({ min: 3 }),
+    check(
+      "Username",
+      "Username is required and it should be atleast 3 character long"
+    ).isLength({ min: 3 }),
     check(
       "Username",
       "Username contains non alphanumeric characters - not allowed"
