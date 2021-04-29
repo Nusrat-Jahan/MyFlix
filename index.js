@@ -294,6 +294,21 @@ app.delete(
       });
   }
 );
+// Allow a existing movie to delete
+app.delete("/movies/:title", (req, res) => {
+  Movies.findOneAndDelete({ Title: req.params.title })
+    .then(movie => {
+      if (!movieid) {
+        res.status(400).send(req.params.MovieID + " was not found");
+      } else {
+        res.status(200).send(req.params.MovieID + " was deleted.");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
+});
 // Users.findOneAndUpdate(
 //       { Username: req.params.username },
 //       {
