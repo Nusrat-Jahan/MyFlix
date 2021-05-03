@@ -104,9 +104,13 @@ app.get("/documentation", (req, res) => {
 });
 
 // Return a list of ALL movies to the user
-app.get("/movies", (req, res) => {
-  res.json(movies);
-});
+app.get(
+  "/movies",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.json(movies);
+  }
+);
 
 // Return data (genre, director, release year) about a single movie by title to the user
 app.get(
