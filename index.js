@@ -280,22 +280,43 @@ app.put(
 );
 
 // Allow users to remove a movie from their list of favorites
-app.delete(
+// app.delete(
+//   "/users/:username/movies/:MovieID",
+//   passport.authenticate("jwt", { session: false }),
+//   (req, res) => {
+//     Users.findOneAndDelete({ Username: req.params.username })
+//       .then(movieid => {
+//         if (!movieid) {
+//           res.status(400).send(req.params.MovieID + " was not found");
+//         } else {
+//           res.status(200).send(req.params.MovieID + " was deleted.");
+//         }
+//       })
+//       .catch(err => {
+//         console.error(err);
+//         res.status(500).send("Error: " + err);
+//       });
+//   }
+// );
+app.post(
   "/users/:username/movies/:MovieID",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    Users.findOneAndDelete({ Username: req.params.username })
-      .then(movieid => {
-        if (!movieid) {
-          res.status(400).send(req.params.MovieID + " was not found");
+    Users.findOneAndUpdate(
+      { Username: req.params.username },
+      {
+        $pull: { FavoriteMovies: req.params.MovieID }
+      },
+      { new: true }, // This line makes sure that the updated document is returned
+      (err, updatedUser) => {
+        if (err) {
+          console.error(err);
+          res.status(500).send("Error: " + err);
         } else {
-          res.status(200).send(req.params.MovieID + " was deleted.");
+          res.json(updatedUser);
         }
-      })
-      .catch(err => {
-        console.error(err);
-        res.status(500).send("Error: " + err);
-      });
+      }
+    );
   }
 );
 // Allow a existing movie to delete
