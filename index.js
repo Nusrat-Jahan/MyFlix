@@ -298,7 +298,7 @@ app.put(
 //       });
 //   }
 // );
-app.post(
+app.delete(
   "/users/:username/movies/:MovieID",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
