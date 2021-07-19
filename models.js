@@ -26,10 +26,20 @@ let userSchema = mongoose.Schema({
   Birthdate: Date,
   FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }]
 });
+
+/**
+ * Function to hash user password and that encrypted passwords are stored in the database
+ * @param {string} password
+ */
 userSchema.statics.hashPassword = password => {
   return bcrypt.hashSync(password, 10);
 };
-userSchema.methods.validatePassword = function(password) {
+
+/**
+ * Function to compare the hashed password in the database with the password that users enter
+ * @param {string} password
+ */
+userSchema.methods.validatePassword = function (password) {
   return bcrypt.compareSync(password, this.Password);
 };
 let Movie = mongoose.model("Movie", movieSchema);
